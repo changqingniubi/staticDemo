@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html  onselectstart="return false">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>3D相册</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background: #000;
+        }
+        #perspective{
+            perspective: 800px;//景深
+        }
+        #wrap{
+            width: 120px;
+            height: 180px;
+            /*border: 1px solid #fff;*/
+            margin: 150px auto;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateY(0deg) rotateX(-20deg);
+            cursor: pointer;
+
+        }
+        #wrap img{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+
+
+            box-shadow: 0 0 8px white;
+        }
+    </style>
+</head>
+<body>
+    <div id="perspective">
+        <div id="wrap">
+            <img src="images/1.png" alt=""/>
+            <img src="images/2.png" alt=""/>
+            <img src="images/3.png" alt=""/>
+            <img src="images/4.png" alt=""/>
+            <img src="images/5.png" alt=""/>
+            <img src="images/6.png" alt=""/>
+            <img src="images/7.png" alt=""/>
+            <img src="images/8.png" alt=""/>
+            <img src="images/9.png" alt=""/>
+            <img src="images/10.png" alt=""/>
+            <img src="images/11.png" alt=""/>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    window.onload=function(){
+        var oImg=document.getElementsByTagName("img");
+        var oWrap=document.getElementById("wrap");
+        var len=oImg.length;
+        var deg=360/len;
+        var nowX,nowY,lastX,lastY,minusX,minusY,roY= 0,roX=-20,time;
+        for(var i=0;i<oImg.length;i++){
+            oImg[i].style.transform="rotateY("+i*deg+"deg) translateZ(350px)";
+            oImg[len-1-i].style.transition="1.5s "+0.2*i+"s";
+        }
+
+        document.onmousedown=function(e){
+            console.log("down...");
+            var e=e||window.event;
+            lastX= e.clientX;
+            lastY= e.clientY;
+
+            this.onmousemove=function(e){
+                console.log("move...");
+                var e=e||window.event;
+                nowX= e.clientX;
+                nowY= e.clientY;
+
+                minusX=nowX-lastX;
+                minusY=nowY-lastY;
+
+                roX-=minusY*0.2;
+                roY+=minusX*0.2;
+
+                oWrap.style.transform="rotateX("+roX+"deg) rotateY("+roY+"deg)";
+                //中间执行相册旋转事件
+                lastX=nowX;
+                lastY=nowY;
+            }
+            this.onmouseup=function(e){
+                console.log("up...");
+                var e=e||window.event;
+                this.onmousemove=null;
+
+                //惯性运动
+                time=setInterval(function(){
+                    minusX*=0.98;
+                    minusY*=0.98;
+                    roX-=minusY*0.2;
+                    roY+=minusX*0.2;
+                    oWrap.style.transform="rotateX("+roX+"deg) rotateY("+roY+"deg)";
+                    if(Math.abs(minusX)<0.1&&Math.abs(minusY)<0.1){
+                        clearInterval(time);
+                    }
+                },13)
+
+            }
+
+        }
+
+
+
+    }
+</script>
+</html>
